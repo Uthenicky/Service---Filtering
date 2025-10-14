@@ -1,17 +1,24 @@
 from pydantic import BaseModel
-from typing import Optional, List
+# from typing import Optional, List
 
 class MessageIn(BaseModel):
-    client_id: str
-    from_number: str
-    to_number: str
-    text: str
+  tenant_id: str
+  from_number: str
+  to_number: str
+  text: str
 
 class AnalysisResult(BaseModel):
-    sentiment: dict
-    badwords: dict
-    normalized_text: str
+  sentiment: dict
+  badwords: dict
+  normalized_text: str
 
 class MessageOut(BaseModel):
-    original_message: MessageIn
-    analysis: AnalysisResult
+  original_message: MessageIn
+  analysis: AnalysisResult
+
+class CustomerMetricsIn(BaseModel):
+  tenant_id: str
+  message_log_id: int
+  from_number: str
+  has_badwords: bool
+  sentiment_score: int

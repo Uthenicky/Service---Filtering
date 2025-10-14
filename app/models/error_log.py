@@ -6,7 +6,7 @@ class ErrorLog(Base):
   __tablename__ = "error_logs"
 
   id = Column(Integer, primary_key=True, index=True)
-  client_id = Column(String, index=True)
+  tenant_id = Column(String, index=True)
   request_payload = Column(JSON)
   # Catat di langkah mana error terjadi
   error_step = Column(String)

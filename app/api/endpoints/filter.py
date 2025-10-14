@@ -1,49 +1,45 @@
-
-from fastapi import APIRouter, Depends, BackgroundTasks, status
+from fastapi import APIRouter, Depends, BackgroundTasks, status, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api import schemas
 from app.core.database import get_db
 from app.services.normalization import normalizer
 from app.services.analysis import analysis_service
-from app.crud import crud_message
+from app.crud import background_process
 
 router = APIRouter()
 
 @router.post("/", response_model=schemas.MessageOut, status_code=status.HTTP_202_ACCEPTED)
 async def filter_message(
-    message_in: schemas.MessageIn,
-    background_tasks: BackgroundTasks,
-    db: AsyncSession = Depends(get_db)
+  message_in: schemas.MessageIn,
+  background_tasks: BackgroundTasks,
+  db: AsyncSession = Depends(get_db)
 ):
-    """
-    Menerima pesan, menjalankan pipeline analisis, menyimpan log di background,
-    dan mengembalikan hasil analisis.
-    """
-    # 1. Slang Normalization
+  try:
     normalized_text = normalizer.normalize(message_in.text)
     
-    # 2. Sentiment & Bad Words Analysis
     sentiment = analysis_service.analyze_sentiment(normalized_text)
     badwords = analysis_service.filter_badwords(normalized_text)
     
     analysis_result = schemas.AnalysisResult(
-        sentiment=sentiment,
-        badwords=badwords,
-        normalized_text=normalized_text
+      sentiment=sentiment,
+      badwords=badwords,
+      normalized_text=normalized_text
     )
     
-    # 3. Simpan log ke DB secara asinkron di background
-    # Ini membuat respons API menjadi sangat cepat
     background_tasks.add_task(
-        crud_message.create_log, 
-        db, 
-        message_in=message_in, 
-        analysis=analysis_result
+      background_process.log_all_data_in_background, 
+      db, 
+      message_in=message_in, 
+      analysis=analysis_result
     )
     
-    # 4. Kembalikan hasil analisis
     return schemas.MessageOut(
-        original_message=message_in,
-        analysis=analysis_result
+      original_message=message_in,
+      analysis=analysis_result
+    )
+  except Exception as e:
+    raise HTTPException(
+      status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+      detail=f"Internal server error: {e}"
     )

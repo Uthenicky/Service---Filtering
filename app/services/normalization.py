@@ -49,8 +49,3 @@ dict_path = os.path.join(os.path.dirname(__file__), '..', 'dict', 'dictSlang.jso
 
 # Init normalizer
 normalizer = SlangNormalizer(dict_path, redis_client)
-
-# Contoh uji
-# sample_text = "gw gpp bgt makan disini"
-# print("Asli   :", sample_text)
-# print("Normal :", normalizer.normalize(sample_text))

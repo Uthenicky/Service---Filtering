@@ -9,5 +9,5 @@ Base = declarative_base()
 
 # Dependency untuk diinjeksi ke dalam endpoint
 async def get_db() -> AsyncSession:
-    async with AsyncSessionLocal() as session:
-        yield session
+  async with AsyncSessionLocal() as session:
+    yield session

@@ -6,7 +6,6 @@ import redis
 from .custom_sentiment import custom_analyzer
 from .regex_badwords import contains_badword
 
-# 🔹 Redis client
 redis_client = redis.Redis(host="localhost", port=6379, db=0, decode_responses=True)
 
 BADWORDS_SET = set()
@@ -43,12 +42,12 @@ def normalize_for_profanity_check(word: str) -> str:
   normalized_word = word.lower()
 
   leetspeak_map = {
-      "4": "a",
-      "1": "i",
-      "3": "e",
-      "0": "o",
-      "5": "s",
-      "7": "t",
+    "4": "a",
+    "1": "i",
+    "3": "e",
+    "0": "o",
+    "5": "s",
+    "7": "t",
   }
   for k, v in leetspeak_map.items():
     normalized_word = normalized_word.replace(k, v)
