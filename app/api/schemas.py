@@ -6,6 +6,8 @@ class MessageIn(BaseModel):
   from_number: str
   to_number: str
   text: str
+  message_id: str
+  customer_id: int
 
 class AnalysisResult(BaseModel):
   sentiment: dict

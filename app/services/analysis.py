@@ -94,7 +94,6 @@ class AnalysisService:
     }
 
 
-# Load badwords saat startup
 load_badwords()
 
 analysis_service = AnalysisService()
