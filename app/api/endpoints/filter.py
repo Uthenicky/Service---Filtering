@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api import schemas
 from app.core.database import get_db
-from app.services.normalization import normalizer
+from app.services.normalization import SlangNormalizer
 from app.services.analysis import analysis_service
 from app.crud import background_process
 
@@ -16,8 +16,7 @@ async def filter_message(
   db: AsyncSession = Depends(get_db)
 ):
   try:
-    normalized_text = normalizer.normalize(message_in.text)
-    
+    normalized_text = SlangNormalizer.normalize(message_in.text)
     sentiment = analysis_service.analyze_sentiment(normalized_text)
     badwords = analysis_service.filter_badwords(normalized_text)
     
